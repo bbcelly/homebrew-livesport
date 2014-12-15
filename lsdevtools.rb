@@ -6,18 +6,19 @@ require "formula"
 # openssl dgst -sha1 lsdevtools_*
 
 class Lsdevtools < Formula
-  version = "1.15.4-0"
+  version = "1.15.5-0"
   urlPrefix = "http://lsdevtools.belakos/"
 
   version version
 
   url "#{urlPrefix}#{version}/lsdevtools_#{version}+ubuntu_all.tar.gz"
-  sha1 "d8260e03224d294f5439e5d63e14ec60cabea71a"
+  sha1 "dd4128c50ab9a3f24b3172e27fd424a8cad20d90"
   depends_on "bash"
+  depends_on "coreutils"
 
   patch do
     url "#{urlPrefix}#{version}/lsdevtools_#{version}.diff"
-    sha1 "723fec459f2f4e22ab90b7587410e8d9b92993cf"
+    sha1 "2865d58fa7ce7c87e1615b71103aee6889652855"
   end
 
   resource "prepareTimemachine.sh" do
