@@ -3,26 +3,27 @@ require "formula"
 # Documentation: https://github.com/Homebrew/homebrew/wiki/Formula-Cookbook
 # Example: /opt/brew/Library/Contributions/example-formula.rb
 
-# openssl dgst -sha1 lsdevtools_*
+# vim command: read !openssl dgst -sha1 *.tar.gz *.diff
 
 class Lsdevtools < Formula
-  version = "1.15.5-0"
-  urlPrefix = "http://lsdevtools.belakos/"
+  package = "lsdevtools"
+  version = "1.15.6-0+ubuntu_all"
+  urlPrefix = "http://#{package}.belakos/"
 
   version version
 
-  url "#{urlPrefix}#{version}/lsdevtools_#{version}+ubuntu_all.tar.gz"
-  sha1 "dd4128c50ab9a3f24b3172e27fd424a8cad20d90"
+  url "#{urlPrefix}#{version}/#{package}_#{version}.tar.gz"
+  sha1 "b2fa530491ed03073b2819fde9b4194f062efddb"
   depends_on "bash"
   depends_on "coreutils"
 
   patch do
-    url "#{urlPrefix}#{version}/lsdevtools_#{version}.diff"
-    sha1 "2865d58fa7ce7c87e1615b71103aee6889652855"
+    url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
+    sha1 "dfcb85217590ba704039e29456c6da000dcff01c"
   end
 
   resource "prepareTimemachine.sh" do
-    url "http://lsdevtools.belakos/prepareTimemachine.sh"
+    url "#{urlPrefix}prepareTimemachine.sh"
     sha1 "9b4f7017adbae88eb96dbb19f3a31eb70c560450"
   end
 
