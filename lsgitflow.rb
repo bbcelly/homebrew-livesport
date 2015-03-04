@@ -24,7 +24,8 @@ class Lsgitflow < Formula
 
   def install
 
-    prefix.install Dir["./local/bin"]
+    prefix.install Dir["./etc"]
+    prefix.install Dir["./usr/local/bin"]
 
   end
 end
