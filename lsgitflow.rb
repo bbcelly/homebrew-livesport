@@ -17,7 +17,7 @@ class Lsgitflow < Formula
   depends_on "lsdevtools"
   depends_on "bash-completion"
 
-  patch :p2 do
+  patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
     sha1 "01740724e6a96faa0fc75a7fae03c338bc9a4b50"
   end
