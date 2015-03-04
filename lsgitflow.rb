@@ -15,6 +15,7 @@ class Lsgitflow < Formula
   url "#{urlPrefix}#{version}/#{package}_#{version}.tar.gz"
   sha1 "e6a5052f52a581912d30a9dfc9bde6a8079899c3"
   depends_on "lsdevtools"
+  depends_on "bash-completion"
 
   patch :p2 do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
