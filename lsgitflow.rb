@@ -7,19 +7,19 @@ require "formula"
 
 class Lsgitflow < Formula
   package = "lsgitflow"
-  version = "1.5.6-6+ubuntu_all"
+  version = "1.5.6-7+ubuntu_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
 
   url "#{urlPrefix}#{version}/#{package}_#{version}.tar.gz"
-  sha1 "e6a5052f52a581912d30a9dfc9bde6a8079899c3"
+  sha1 "b13270b7e6844c1248278a65a59b1e4459fd447a"
   depends_on "lsdevtools"
   depends_on "bash-completion"
 
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
-    sha1 "01740724e6a96faa0fc75a7fae03c338bc9a4b50"
+    sha1 "d3588d0c4fefd89d622d3bbd10a37fad65929b09"
   end
 
   def install
