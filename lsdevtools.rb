@@ -24,7 +24,7 @@ class Lsdevtools < Formula
 
   resource "prepareTimemachine.sh" do
     url "#{urlPrefix}prepareTimemachine.sh"
-    sha1 "a1dceac52ecc73ee5181beced976ca5691d2b7e6"
+    sha1 "9b4f7017adbae88eb96dbb19f3a31eb70c560450"
   end
 
   def install
