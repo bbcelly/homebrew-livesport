@@ -19,7 +19,7 @@ class Lsdevtools < Formula
 
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
-    sha1 "c2fa99e431244029c5a092d043d54e5e410e8a84"
+    sha1 "2a3fe8cb882c7a00a13ee63085ba2ee6431da61a"
   end
 
   resource "prepareTimemachine.sh" do
