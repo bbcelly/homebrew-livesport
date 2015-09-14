@@ -7,7 +7,7 @@ require "formula"
 
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.29-1-b+trusty_all"
+  version = "1.15.29-1-c+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
@@ -19,7 +19,7 @@ class Lsdevtools < Formula
 
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
-    sha1 "2a3fe8cb882c7a00a13ee63085ba2ee6431da61a"
+    sha1 "1bfc9106f1490f6a41f8ecbfd569d62929634394"
   end
 
   resource "prepareTimemachine.sh" do
