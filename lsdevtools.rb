@@ -7,7 +7,7 @@ require "formula"
 
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.29-1+trusty_all-aaa"
+  version = "1.15.29-1-a+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
