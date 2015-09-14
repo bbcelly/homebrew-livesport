@@ -7,19 +7,19 @@ require "formula"
 
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.7-8+trusty_all"
+  version = "1.15.29-1+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
 
   url "#{urlPrefix}#{version}/#{package}_#{version}.tar.xz"
-  sha1 "c16e6c1e1259c1a7ea306423e958701e7d8bb525"
+  sha1 "9e08c0d91698f297cfdddf9e05c73d7a7985f2bd"
   depends_on "bash"
   depends_on "coreutils"
 
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
-    sha1 "b11b7c4fc7e34a5db8481202890b57b64b8dec32"
+    sha1 "c2fa99e431244029c5a092d043d54e5e410e8a84"
   end
 
   resource "prepareTimemachine.sh" do
