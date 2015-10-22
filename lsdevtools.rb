@@ -5,7 +5,7 @@ require "formula"
 
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.29-1-e+trusty_all"
+  version = "1.15.29-1-f+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
@@ -44,15 +44,18 @@ class Lsdevtools < Formula
 
     xCodeUser = File.join(userHome, "Library/Developer/Xcode")
     xCodeUserBin = File.join(xCodeUser, "usr/bin")
+    xCodeUserLibexec = File.join(xCodeUser, "usr/libexec")
     xCodeUserEtc = File.join(xCodeUser, "usr/etc")
     xCodeUserTemplates = File.join(xCodeUser, "usr/share/git-core/templates")
 
     xCodeUserGit = File.join(xCodeUserBin, "git")
     xCodeUserGitconfig = File.join(xCodeUserEtc, "gitconfig")
+    xCodeUserGitCore = File.join(xCodeUserLibexec, "git-core")
     xCodeUserHooks = File.join(xCodeUserTemplates, "hooks")
 
     mkdir_p(xCodeUser)
     mkdir_p(xCodeUserBin)
+    mkdir_p(xCodeUserLibexec)
     mkdir_p(xCodeUserEtc)
     mkdir_p(xCodeUserTemplates)
 
@@ -68,7 +71,14 @@ class Lsdevtools < Formula
       File.unlink(xCodeUserHooks)
     end
 
-    ln_s(File.join(%x(xcode-select --print-path).strip, "usr/bin/git"), xCodeUserGit)
+    if File.symlink?(xCodeUserGitCore)
+      File.unlink(xCodeUserGitCore)
+    end
+
+    xCodePath = %x(xcode-select --print-path).strip
+
+    ln_s(File.join(xCodePath, "usr/bin/git"), xCodeUserGit)
+    ln_s(File.join(xCodePath, "usr/libexec/git-core"), xCodeUserGitCore)
     ln_s(File.join(HOMEBREW_PREFIX, "etc/gitconfig"), xCodeUserGitconfig)
     ln_s(File.join(HOMEBREW_PREFIX, "share/git-core/.hooks"), xCodeUserHooks)
 
