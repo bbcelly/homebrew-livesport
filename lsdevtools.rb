@@ -5,7 +5,7 @@ require "formula"
 
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.29-1-d+trusty_all"
+  version = "1.15.29-1-e+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
@@ -84,7 +84,11 @@ class Lsdevtools < Formula
           f << "\n"
           f << "# added automatically by lsdevtools"
           f << "\n"
-          f << "PATH=\"#{binPath}:${PATH}\""
+          f << "if [[ -d #{binPath} ]]; then"
+          f << "\n"
+          f << "\tPATH=\"#{binPath}:${PATH}\""
+          f << "\n"
+          f << "fi"
           f << "\n"
         end
         ohai "Automatically added '#{binPath}' to PATH in '#{rcFile}'."
