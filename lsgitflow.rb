@@ -3,8 +3,6 @@ require "formula"
 # Documentation: https://github.com/Homebrew/homebrew/wiki/Formula-Cookbook
 # Example: /opt/brew/Library/Contributions/example-formula.rb
 
-# vim command: read !openssl dgst -sha1 *.tar.gz *.diff
-
 class Lsgitflow < Formula
   package = "lsgitflow"
   version = "1.5.7-0+ubuntu_all"

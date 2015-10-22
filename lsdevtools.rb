@@ -3,11 +3,9 @@ require "formula"
 # Documentation: https://github.com/Homebrew/homebrew/wiki/Formula-Cookbook
 # Example: /opt/brew/Library/Contributions/example-formula.rb
 
-# vim command: read !openssl dgst -sha1 *.tar.xz *.diff
-
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.29-1-c+trusty_all"
+  version = "1.15.29-1-d+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
 
   version version
@@ -20,11 +18,6 @@ class Lsdevtools < Formula
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
     sha1 "1bfc9106f1490f6a41f8ecbfd569d62929634394"
-  end
-
-  resource "prepareTimemachine.sh" do
-    url "#{urlPrefix}prepareTimemachine.sh"
-    sha1 "9b4f7017adbae88eb96dbb19f3a31eb70c560450"
   end
 
   def install
@@ -45,43 +38,59 @@ class Lsdevtools < Formula
     prefix.install Dir["./usr/local/bin"]
     prefix.install Dir["./usr/share"]
 
-    # prepareTimemachine.sh
-
-    resource("prepareTimemachine.sh").stage {
-      bin.install "prepareTimemachine.sh"
-    }
-
     # Xcode gitconfig
 
-    xCodeDeveloper = %x(xcode-select --print-path).strip
-    xCodeEtc = File.join(xCodeDeveloper, "usr/etc")
-    xCodeGitConfig = File.join(xCodeEtc, "gitconfig")
+    userHome = %x(greadlink -f ~#{ENV["USER"]}).strip
 
-    if not File.directory?(xCodeEtc)
-      %x(sudo mkdir -p "#{xCodeEtc}")
+    xCodeUser = File.join(userHome, "Library/Developer/Xcode")
+    xCodeUserBin = File.join(xCodeUser, "usr/bin")
+    xCodeUserEtc = File.join(xCodeUser, "usr/etc")
+    xCodeUserTemplates = File.join(xCodeUser, "usr/share/git-core/templates")
+
+    xCodeUserGit = File.join(xCodeUserBin, "git")
+    xCodeUserGitconfig = File.join(xCodeUserEtc, "gitconfig")
+    xCodeUserHooks = File.join(xCodeUserTemplates, "hooks")
+
+    mkdir_p(xCodeUser)
+    mkdir_p(xCodeUserBin)
+    mkdir_p(xCodeUserEtc)
+    mkdir_p(xCodeUserTemplates)
+
+    if File.symlink?(xCodeUserGit)
+      File.unlink(xCodeUserGit)
     end
 
-    if File.file?(xCodeGitConfig) or File.symlink?(xCodeGitConfig)
-      %x(sudo rm -f "#{xCodeGitConfig}")
+    if File.symlink?(xCodeUserGitconfig)
+      File.unlink(xCodeUserGitconfig)
     end
 
-    target = File.join(etc, "gitconfig")
-    %x(sudo ln -sfn "#{target}" "#{xCodeEtc}")
+    if File.symlink?(xCodeUserHooks)
+      File.unlink(xCodeUserHooks)
+    end
 
-    # git hooks
+    ln_s(File.join(%x(xcode-select --print-path).strip, "usr/bin/git"), xCodeUserGit)
+    ln_s(File.join(HOMEBREW_PREFIX, "etc/gitconfig"), xCodeUserGitconfig)
+    ln_s(File.join(HOMEBREW_PREFIX, "share/git-core/.hooks"), xCodeUserHooks)
 
-    xCodeGitTemplates = File.join(xCodeDeveloper, "usr/share/git-core/templates/hooks")
+    binPath = "${HOME}/Library/Developer/Xcode/usr/bin"
 
-    Dir.foreach(File.join(share, "git-core/.hooks")) do |item|
-      if item == '.' or item == '..'
-        next
+    bashRc = File.join(userHome, ".bashrc")
+    bashProfile = File.join(userHome, ".bash_profile")
+
+    if File.file?(bashRc) or File.file?(bashProfile)
+      rcFile = File.file?(bashRc) ? bashRc : bashProfile
+      if File.readlines(rcFile).grep(Regexp.new(Regexp.escape(binPath))).size == 0
+        open(rcFile, 'a') do |f|
+          f << "\n"
+          f << "# added automatically by lsdevtools"
+          f << "\n"
+          f << "PATH=\"#{binPath}:${PATH}\""
+          f << "\n"
+        end
+        ohai "Automatically added '#{binPath}' to PATH in '#{rcFile}'."
       end
-      xCodeGitHook = File.join(xCodeGitTemplates, item)
-      if File.file?(xCodeGitHook) or File.symlink?(xCodeGitHook)
-        %x(sudo rm -f "#{xCodeGitHook}")
-      end
-      target = File.join(share, "git-core/.hooks", item)
-      %x(sudo ln -sfn "#{target}" "#{xCodeGitHook}")
+    else
+      opoo "No .bashrc nor .bash_profile found. Please add '#{binPath}' to PATH manually."
     end
 
   end
