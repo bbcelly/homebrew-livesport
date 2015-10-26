@@ -18,7 +18,7 @@ class Lsdevtools < Formula
 
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
-    sha1 "1bfc9106f1490f6a41f8ecbfd569d62929634394"
+    sha1 "ce0f533510845d0ef9f1be704faf9435df450fd5"
   end
 
   def install
