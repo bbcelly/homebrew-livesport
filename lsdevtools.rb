@@ -5,15 +5,16 @@ require "formula"
 
 class Lsdevtools < Formula
   package = "lsdevtools"
-  version = "1.15.29-1-f+trusty_all"
+  version = "1.16-0+trusty_all"
   urlPrefix = "http://#{package}.belakos/"
-
-  version version
-
   url "#{urlPrefix}#{version}/#{package}_#{version}.tar.xz"
-  sha1 "9e08c0d91698f297cfdddf9e05c73d7a7985f2bd"
+  sha1 "b64c45c0b769bbdca9434a3d33d620d29a36004e"
+
   depends_on "bash"
   depends_on "coreutils"
+  depends_on "git"
+
+  version version
 
   patch do
     url "#{urlPrefix}#{version}/#{package}_#{version}.diff"
@@ -22,89 +23,23 @@ class Lsdevtools < Formula
 
   def install
 
-    # hooks to bash v4
-
-    gitCoreHooks = "./usr/share/git-core/.hooks"
-    Dir.foreach(gitCoreHooks) do |item|
-      if item == '.' or item == '..'
-        next
-      end
-      inreplace File.join(gitCoreHooks, item), /#!\/usr\/bin\/env bash/, "#!#{HOMEBREW_PREFIX}/bin/bash"
-    end
-
     # install
 
     prefix.install Dir["./etc"]
     prefix.install Dir["./usr/local/bin"]
     prefix.install Dir["./usr/share"]
 
-    # Xcode gitconfig
+    # hooks templates and bash
 
-    userHome = %x(greadlink -f ~#{ENV["USER"]}).strip
+    mkdir_p templateHooksPath = File.join(share, 'git-core/templates/hooks')
 
-    xCodeUser = File.join(userHome, "Library/Developer/Xcode")
-    xCodeUserBin = File.join(xCodeUser, "usr/bin")
-    xCodeUserLibexec = File.join(xCodeUser, "usr/libexec")
-    xCodeUserEtc = File.join(xCodeUser, "usr/etc")
-    xCodeUserTemplates = File.join(xCodeUser, "usr/share/git-core/templates")
-
-    xCodeUserGit = File.join(xCodeUserBin, "git")
-    xCodeUserGitconfig = File.join(xCodeUserEtc, "gitconfig")
-    xCodeUserGitCore = File.join(xCodeUserLibexec, "git-core")
-    xCodeUserHooks = File.join(xCodeUserTemplates, "hooks")
-
-    mkdir_p(xCodeUser)
-    mkdir_p(xCodeUserBin)
-    mkdir_p(xCodeUserLibexec)
-    mkdir_p(xCodeUserEtc)
-    mkdir_p(xCodeUserTemplates)
-
-    if File.symlink?(xCodeUserGit)
-      File.unlink(xCodeUserGit)
-    end
-
-    if File.symlink?(xCodeUserGitconfig)
-      File.unlink(xCodeUserGitconfig)
-    end
-
-    if File.symlink?(xCodeUserHooks)
-      File.unlink(xCodeUserHooks)
-    end
-
-    if File.symlink?(xCodeUserGitCore)
-      File.unlink(xCodeUserGitCore)
-    end
-
-    xCodePath = %x(xcode-select --print-path).strip
-
-    ln_s(File.join(xCodePath, "usr/bin/git"), xCodeUserGit)
-    ln_s(File.join(xCodePath, "usr/libexec/git-core"), xCodeUserGitCore)
-    ln_s(File.join(HOMEBREW_PREFIX, "etc/gitconfig"), xCodeUserGitconfig)
-    ln_s(File.join(HOMEBREW_PREFIX, "share/git-core/.hooks"), xCodeUserHooks)
-
-    binPath = "${HOME}/Library/Developer/Xcode/usr/bin"
-
-    bashRc = File.join(userHome, ".bashrc")
-    bashProfile = File.join(userHome, ".bash_profile")
-
-    if File.file?(bashRc) or File.file?(bashProfile)
-      rcFile = File.file?(bashRc) ? bashRc : bashProfile
-      if File.readlines(rcFile).grep(Regexp.new(Regexp.escape(binPath))).size == 0
-        open(rcFile, 'a') do |f|
-          f << "\n"
-          f << "# added automatically by lsdevtools"
-          f << "\n"
-          f << "if [[ -d #{binPath} ]]; then"
-          f << "\n"
-          f << "\tPATH=\"#{binPath}:${PATH}\""
-          f << "\n"
-          f << "fi"
-          f << "\n"
-        end
-        ohai "Automatically added '#{binPath}' to PATH in '#{rcFile}'."
+    gitCoreHooks = File.join(share, "git-core/.hooks")
+    Dir.foreach(gitCoreHooks) do |item|
+      if item != '.' and item != '..'
+        hookPath = File.join(gitCoreHooks, item)
+        Pathname.new(templateHooksPath).install_symlink hookPath
+        inreplace hookPath, /#!\/usr\/bin\/env bash/, "#!#{HOMEBREW_PREFIX}/bin/bash"
       end
-    else
-      opoo "No .bashrc nor .bash_profile found. Please add '#{binPath}' to PATH manually."
     end
 
   end
