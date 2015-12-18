@@ -23,13 +23,9 @@ class Lsdevtools < Formula
 
   def install
 
-    # install
-
     prefix.install Dir["./etc"]
     prefix.install Dir["./usr/local/bin"]
     prefix.install Dir["./usr/share"]
-
-    # hooks templates and bash
 
     mkdir_p templateHooksPath = File.join(share, 'git-core/templates/hooks')
 
